@@ -13,6 +13,17 @@ app.post('/',(req,res)=>{    //We are posting email and amount
   var email=req.body.email;   //And we are catching them
   var amount =req.body.amount;
 
+  if(amount<=1){
+    return_info={};
+    return_info.error=true;
+    return_info.message="The amount should be greater than 1";
+    return res.send(return_info);
+  }
+
+
+
+
+
   res.send({'amount' : amount,'email' : email });  //and then taking the email and amount and sending it back to user
  //later on it will be visible on the browser.
 });
