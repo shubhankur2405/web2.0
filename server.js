@@ -2,9 +2,12 @@ const express=require('express'); //to include express that we installed by "npm
 const app =express();
 const bodyParser=require('body-parser');
 const {save_user_information} =require('./models/server_db');
+const path = require('path');
+const publicPath = path.join(__dirname, './public');
 
 /*handling all the parsing*/
 app.use(bodyParser.json());
+app.use(express.static(publicPath));
 
 // app.get('/',(req,res)=>{
 //   res.send("HELLO WEB 2.0")     // By this we can able tp see on the chrome browser,ie on server
