@@ -7,11 +7,12 @@ class App extends React.Component{
       'email' : '',
     }
   }
-  async componentDidMount(){
+  async componentDidMount(){  //Mounts the information we get on the start,if it doesnt it will casue an errot on the screen,it basically assures the brower that hey do we already have the infoprmation  that we need to go forward
     const result = await axios.get('/get_total_amount');
     this.setState({total_amount : result.data["0"].total_amount});
   }
-  onSubmit = async (event) =>{
+
+  onSubmit = async (event) =>{     //axios library is adde to get the information in our backend  ,axios CDN
     event.preventDefault();
     const response = await axios.post('/post_info',{
       amount : this.state.amount,
@@ -19,6 +20,12 @@ class App extends React.Component{
     })
     window.location.href = response.data;
   }
+
+
+
+  /* <input placeholder="amount" value ={this.state.amount}/> */ //will take value from constructor
+  // onChange is used for updation of value when user changes the amount
+
   render(){
     return(
       <div className="container">
