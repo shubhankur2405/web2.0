@@ -105,12 +105,12 @@
 //
 //       }
 //   });
-//   /* delete all mysql users */
-//   if(req.session.winner_picked){
-//     var deleted = await delete_users();
-//   }
-//   req.session.winner_picked = false;
-//   res.redirect('http://localhost:3000');
+  // /* delete all mysql users */
+  // if(req.session.winner_picked){
+  //   var deleted = await delete_users();
+  // }
+  // req.session.winner_picked = false;
+  // res.redirect('http://localhost:3000');
 // });
 //
 // app.get('/get_total_amount', async (req,res)=>{
@@ -226,7 +226,8 @@
 const express=require('express'); //to include express that we installed by "npm install express --save"
 const app =express();
 const bodyParser=require('body-parser');
-const {save_user_information} =require('./models/server_db');
+const {save_user_information,get_list_of_participants,
+delete_users} =require('./models/server_db');
 const path = require('path');
 const publicPath = path.join(__dirname, './public');
 const paypal = require('paypal-rest-sdk');
@@ -340,7 +341,13 @@ app.get('/success', async (req,res)=>{
       console.log(payment);
     }
   });
+  /* delete all mysql users */
+  if(req.session.winner_picked){
+    var deleted = await delete_users();
+  }
+  req.session.winner_picked = false;
   res.redirect('http://localhost:3000');
+
 });
 
 
