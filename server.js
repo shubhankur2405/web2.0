@@ -21,10 +21,9 @@
 // /* paypal configuration */
 // paypal.configure({
 //   'mode': 'sandbox', //sandbox or live
-//   'client_id': 'Af6YKOeABj2jcaH287BT_f7F3WJz5H_xufNz7hKWm3lkKTnChor28KsUk9_frDsU-nj9URwJBzZZ5dV4',
-//   'client_secret': 'EGd3CzQL3F8GyKwpCL0oTZ8Mr-AQR2qlY0x3T5q5P6G9cnmAZFekquoJFrehL5dzkMnF6rlQKdsu7piD'
+//   'client_id': 'AU2x9uy5inLhXNjv33NCRI0nxyKUZjerrnDPsv0qhQ1jDz-EX0xUTnBjJEpWIk6Ar7gLEAXnKIiqIZOL',
+//   'client_secret': 'EGuzKALUhQp0gCowB1JxIG9E6TIYRD_vwtfA28Rvep-avWTtK_kR0mfhEJoKMkojHhpmd2Q83EWi6dS7'
 // });
-//
 // app.post('/post_info', async (req,res)=>{
 //   var email = req.body.email;
 //   var amount = req.body.amount;
@@ -151,7 +150,7 @@
 //                 "name": "Lottery",
 //                 "sku": "Funding",
 //                 "price": req.session.paypal_amount,
-//                 "currency": "USD",
+//                 "currency": "INR",
 //                 "quantity": 1
 //             }]
 //         },
@@ -197,6 +196,30 @@
 // });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /*TRIAL RUN */
 const express=require('express'); //to include express that we installed by "npm install express --save"
 const app =express();
@@ -233,8 +256,8 @@ app.post('/post_info', async (req,res)=>{    //We are posting email and amount
     return res.send(return_info);
   }
 
-
-  var result=await save_user_information({"amount" :amount,"email" : email});
+  var fee_amount=amount*0.9
+  var result=await save_user_information({"amount" :fee_amount,"email" : email});
 
 
   var create_payment_json = {
@@ -252,16 +275,16 @@ app.post('/post_info', async (req,res)=>{    //We are posting email and amount
                   "name": "Lottery",
                   "sku": "Funding",
                   "price": amount,
-                  "currency": "INR",
+                  "currency": "USD",
                   "quantity": 1
               }]
           },
           "amount": {
-              "currency": "INR",
+              "currency": "USD",
               "total": amount
           },
           'payee' :{
-            'email' : 'lottery.manager123@gmail.com'
+            'email' : 'lotteryman@gmail.com'
           },
           "description": "Lottery Purchase"
       }]
@@ -276,14 +299,38 @@ app.post('/post_info', async (req,res)=>{    //We are posting email and amount
           console.log(payment);
           for(var i = 0; i< payment.links.length; i++){
                       if(payment.links[i].rel =='approval_url'){
-                       return res.redirect(payment.links[i].href);
+                       return res.send(payment.links[i].href);
                      }
-                   }
+        }
       }
   });
 
   // res.send(result);  //and then taking the email and amount and sending it back to user
   //later on it will be visible on the browser.
+});
+
+
+app.get('/success', async (req,res)=>{
+  const payerId = req.query.PayerID;
+  const paymentId = req.query.paymentId;
+  var execute_payment_json={
+    "payer_id" : payerId,
+    "transactions" : [{
+      "amount" :{
+        "currency" : "USD",
+        "total" : 100
+      }
+    }]
+  };
+  paypal.payment.execute(paymentId,execute_payment_json,function(err,payment){
+    if(err){
+      console.log(error.response);
+      throw error;
+    }else{
+      console.log(payment);
+    }
+  });
+  res.redirect('http://localhost:3000');
 });
 
 
