@@ -228,7 +228,15 @@ const {save_user_information} =require('./models/server_db');
 const path = require('path');
 const publicPath = path.join(__dirname, './public');
 const paypal = require('paypal-rest-sdk');
+const session = require('express-session');
 
+
+
+app.use(session(
+  {secret: 'my web app',
+  cookie :{maxAge: 60000}
+  }
+));
 /*handling all the parsing*/
 app.use(bodyParser.json());
 app.use(express.static(publicPath));
@@ -258,7 +266,7 @@ app.post('/post_info', async (req,res)=>{    //We are posting email and amount
 
   var fee_amount=amount*0.9
   var result=await save_user_information({"amount" :fee_amount,"email" : email});
-
+  req.session.paypal_amount = amount;
 
   var create_payment_json = {
       "intent": "sale",
@@ -318,7 +326,7 @@ app.get('/success', async (req,res)=>{
     "transactions" : [{
       "amount" :{
         "currency" : "USD",
-        "total" : 100
+        "total" :  req.session.paypal_amount
       }
     }]
   };
